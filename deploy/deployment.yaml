@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: udagram-user-api
+  labels:
+    app: udagram-user-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: udagram-user-api
+  template:
+    metadata:
+      labels:
+        app: udagram-user-api
+    spec:
+      containers:
+      - image: janrotthaus/udagram-user-api
+        name: udagram-user-api
+        imagePullPolicy: Always          
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"
+        env:
+          - name: POSTGRES_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: env-secret
+                key: POSTGRES_USERNAME
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: env-secret
+                key: POSTGRES_PASSWORD
+          - name: POSTGRES_HOST
+            valueFrom:
+              secretKeyRef:
+                name: env-secret
+                key: POSTGRES_HOST
+          - name: POSTGRES_DB
+            valueFrom:
+              secretKeyRef:
+                name: env-secret
+                key: POSTGRES_DB
+          - name: JWT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: env-secret
+                key: JWT_SECRET
+        ports:
+        - containerPort: 8080
+      restartPolicy: Always
+
+
